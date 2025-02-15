@@ -1,4 +1,6 @@
 <script setup lang="ts">
+console.log("LOGIN VUE")
+
 const { loggedIn, user, fetch: refreshSession } = useUserSession()
 const credentials = reactive({
   email: '',
