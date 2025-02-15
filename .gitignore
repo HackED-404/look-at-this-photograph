@@ -1,2 +1,5 @@
 config.ts
 /node_modules/
+.venv
+.DS_Store
+image_processing/.DS_Store
