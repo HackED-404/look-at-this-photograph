@@ -5,4 +5,8 @@ ocr/__pycache__/*
 .DS_Store
 image_processing/.DS_Store
 images
-
+venv/**
+*.egg-info
+**/venv/*
+*.pyc
+.env
