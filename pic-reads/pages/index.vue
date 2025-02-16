@@ -1,27 +1,118 @@
-<template>
-  <div
-      class="dropzone"
-      @dragover.prevent
-      @dragenter.prevent
-      @dragstart.prevent
-      @drop.prevent="handleFileChange($event.dataTransfer)"
-  >
-    <input
-        id="file-input"
-        type="file"
-        accept="image/png, image/jpeg"
-        @change="handleFileChange($event.target)"
-        required
-    />
-    <h2 for="file-input">Click or Drag N Drop Image</h2>
-    <img v-bind:src="preview" />
-    <h3 v-if="preview">File name: {{ fileName }}</h3>
-  </div>
 
-  <button type="submit" v-on:click="upload">Upload</button>
+<template>
+  <NuxtLayout>
+    <div>
+      <div
+          class="dropzone"
+          @dragover.prevent
+          @dragenter.prevent
+          @dragstart.prevent
+          @drop.prevent="handleFileChange($event.dataTransfer)"
+      >
+        <input
+            id="file-input"
+            type="file"
+            accept="image/png, image/jpeg"
+            @change="handleFileChange($event.target)"
+            required
+        />
+        <h2 for="file-input">Click or Drag N Drop Image</h2>
+        <img v-bind:src="preview" />
+        <h3 v-if="preview">File name: {{ fileName }}</h3>
+      </div>
+    </div>
+    <button type="submit" v-on:click="upload">Upload</button>
+
+    <TableOfResults
+        
+        :people="results"></TableOfResults>
+
+  </NuxtLayout>
+
+  
 </template>
 
 <script>
+const results = [{
+  id: 1,
+  name: 'Lindsay Walton',
+  title: 'Front-end Developer',
+  email: 'lindsay.walton@example.com',
+  role: 'Member'
+}, {
+  id: 2,
+  name: 'Courtney Henry',
+  title: 'Designer',
+  email: 'courtney.henry@example.com',
+  role: 'Admin'
+}, {
+  id: 3,
+  name: 'Tom Cook',
+  title: 'Director of Product',
+  email: 'tom.cook@example.com',
+  role: 'Member'
+}, {
+  id: 4,
+  name: 'Whitney Francis',
+  title: 'Copywriter',
+  email: 'whitney.francis@example.com',
+  role: 'Admin'
+}, {
+  id: 5,
+  name: 'Leonard Krasner',
+  title: 'Senior Designer',
+  email: 'leonard.krasner@example.com',
+  role: 'Owner'
+}, {
+  id: 6,
+  name: 'Floyd Miles',
+  title: 'Principal Designer',
+  email: 'floyd.miles@example.com',
+  role: 'Member'
+}, {
+  id: 7,
+  name: 'Emily Selman',
+  title: 'VP, User Experience',
+  email: '',
+  role: 'Admin'
+}, {
+  id: 8,
+  name: 'Kristin Watson',
+  title: 'VP, Human Resources',
+  email: '',
+  role: 'Member'
+}, {
+  id: 9,
+  name: 'Emma Watson',
+  title: 'Front-end Developer',
+  email: '',
+  role: 'Member'
+}, {
+  id: 10,
+  name: 'John Doe',
+  title: 'Designer',
+  email: '',
+  role: 'Admin'
+}, {
+  id: 11,
+  name: 'Jane Doe',
+  title: 'Director of Product',
+  email: '',
+  role: 'Member'
+}, {
+  id: 12,
+  name: 'John Smith',
+  title: 'Copywriter',
+  email: '',
+  role: 'Admin'
+}, {
+  id: 13,
+  name: 'Jane Smith',
+  title: 'Senior Designer',
+  email: '',
+  role: 'Owner'
+}]
+
 export default {
   name: "App",
   data() {
@@ -58,11 +149,12 @@ export default {
             body: this.formData,
           }
       );
+      /**
       const data = await res.json();
       this.fileName = "";
       this.preview = null;
       this.formData = null;
-      this.success = data.public_id;
+      this.success = data.public_id; */
     },
 
   },
