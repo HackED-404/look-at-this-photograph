@@ -1,2 +1,12 @@
 config.ts
 /node_modules/
+ocr/__pycache__/*
+.venv
+.DS_Store
+image_processing/.DS_Store
+images
+venv/**
+*.egg-info
+**/venv/*
+*.pyc
+.env
