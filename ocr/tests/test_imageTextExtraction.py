@@ -38,6 +38,11 @@ class TestImageTextExtraction(unittest.TestCase):
         expected_output = ""
         self.assertEqual(removeSpecialCharacters(input_text), expected_output)
 
+    def test_removeNewLineCharacter(self):
+        input_text = "\n"
+        expected_output = " "
+        self.assertEqual(removeSpecialCharacters(input_text), expected_output)
+
 
 if __name__ == "__main__":
     unittest.main()
