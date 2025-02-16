@@ -1,19 +1,10 @@
-<script setup lang="ts">
-definePageMeta({
-  middleware: ['authenticated'],
-})
-  
-const { user, clear: clearSession } = useUserSession()
-
-async function logout() {
-  await clearSession()
-  await navigateTo('/login')
-}
-</script>
-
 <template>
   <div>
-    <h1>Welcome {{ user.name }}</h1>
-    <button @click="logout">Logout</button>
+    <AppHeader />
+    <h1>Welcome to Nuxt 3</h1>
   </div>
 </template>
+
+<script setup>
+//import AppHeader from '~/components/AppHeader.vue'
+</script>

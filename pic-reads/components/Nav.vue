@@ -1,23 +1,15 @@
 <template>
-    <nav>
-        <ul>
-            <li>
-                <router-link to="/">Home</router-link>
-            </li>
-            <li>
-                <router-link to="/about">About</router-link>
-            </li>
-            <li>
-                <router-link to="/contact">Contact</router-link>
-            </li>
-        </ul>
-    </nav>
+  <nav>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/">About</a></li>
+      <li><a href="/">Contact</a></li>
+    </ul>
+  </nav>
 </template>
 
-<script>
-export default {
-    name: 'Nav'
-}
+<script setup>
+console.log("Nav component loaded")
 </script>
 
 <style scoped>
