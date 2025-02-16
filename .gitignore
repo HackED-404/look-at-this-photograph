@@ -1,2 +1,4 @@
 config.ts
 /node_modules/
+.DS_Store
+ocr/__pycache__/*
