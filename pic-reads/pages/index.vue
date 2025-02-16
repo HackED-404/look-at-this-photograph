@@ -1,5 +1,6 @@
-<template>
+<template >
   <div
+      v-if="isVisible"
       class="dropzone"
       @dragover.prevent
       @dragenter.prevent
@@ -17,11 +18,13 @@
     <img v-bind:src="preview" />
     <h3 v-if="preview">File name: {{ fileName }}</h3>
   </div>
+  <div v-if="isHidden">  <TableOfResults></TableOfResults></div>
 
-  <button type="submit" v-on:click="upload">Upload</button>
+  <button type="submit" v-if="isVisible" v-on:click="upload">Upload</button>
+  <button type="submit" v-if="isHidden" v-on:click="toggleVisibility">New Image</button>
 </template>
+<script >
 
-<script>
 export default {
   name: "App",
   data() {
@@ -32,6 +35,8 @@ export default {
       formData: null,
       cloudName: "abc",
       success: "",
+      isVisible: true, // Initially the element will be visible
+      isHidden: false, // Initially this element is not hidden
     };
   },
   methods: {
@@ -58,13 +63,18 @@ export default {
             body: this.formData,
           }
       );
+      console.log(res)
       const data = await res.json();
       this.fileName = "";
       this.preview = null;
       this.formData = null;
       this.success = data.public_id;
+      this.toggleVisibility()
     },
-
+    toggleVisibility() {
+      this.isVisible = !this.isVisible; // Toggles visibility
+      this.isHidden = !this.isHidden;   // Toggles hidden state for the second element
+    },
   },
 };
 </script>

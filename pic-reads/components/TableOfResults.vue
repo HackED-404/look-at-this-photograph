@@ -80,7 +80,7 @@ const people = [{
 }]
 
 const page = ref(1)
-const pageCount = 10
+const pageCount = 8
 
 const rows = computed(() => {
   return people.slice((page.value - 1) * pageCount, (page.value) * pageCount)
