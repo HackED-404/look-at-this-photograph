@@ -10,3 +10,4 @@ venv/**
 **/venv/*
 *.pyc
 .env
+process_image/src/data/
