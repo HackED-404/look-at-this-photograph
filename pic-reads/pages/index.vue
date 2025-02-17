@@ -1,5 +1,4 @@
 <template>
-
   <div>
     <div class="dropzone" @dragover.prevent @dragenter.prevent @dragstart.prevent
       @drop.prevent="handleFileChange($event.dataTransfer || $event)">
@@ -11,12 +10,9 @@
 
     <button type="submit" v-on:click="upload">Upload</button>
 
-    <TableOfResults :books="books" :loading="isLoading" />
+    <TableOfResults @select="openModal" :books="books" :loading="isLoading" />
+    <BookModal v-if="selectedBook" :show="modalOpen" :book="selectedBook" @close="closeModal" />
   </div>
-
-
-
-
 </template>
 
 <script setup lang="ts">
@@ -29,6 +25,10 @@ interface Book {
   synopsis: string;
 }
 
+const selectedBook = ref(null);
+const modalOpen = ref(false);
+
+
 const books = ref<Book[]>([])
 
 const fileName = ref('');
@@ -37,6 +37,17 @@ const preset = ref('abc');
 const formData = ref<FormData | null>(null);
 const success = ref('');
 const isLoading = ref(false);
+
+function openModal(book) {
+  console.log("Event received! Book selected:", book);
+  selectedBook.value = book;
+  modalOpen.value = true;
+}
+
+function closeModal() {
+  modalOpen.value = false;
+  selectedBook.value = null;
+}
 
 function handleFileChange(event: Event | DataTransfer) {
   const input = event instanceof DataTransfer ? event.files?.[0] : (event.target as HTMLInputElement)?.files?.[0];

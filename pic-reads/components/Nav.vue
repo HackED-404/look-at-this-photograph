@@ -1,24 +1,24 @@
 <template>
-    <nav class="nav">
-      <img src="@/public/logo.png" alt="PicReads Logo" class="logo" />
+  <nav class="nav">
+    <img src="@/public/logo.png" alt="PicReads Logo" class="logo" />
 
-        <ul>
-            <li>
-                <router-link to="/">Home</router-link>
-            </li>
-            <li>
-                <router-link to="/">My BookShelf</router-link>
-            </li>
-            <li>
-                <router-link to="/"></router-link>
-            </li>
-        </ul>
-    </nav>
+    <ul>
+      <li>
+        <router-link to="/">Home</router-link>
+      </li>
+      <li>
+        <router-link to="/myBooks">My BookShelf</router-link>
+      </li>
+      <li>
+        <router-link to="/"></router-link>
+      </li>
+    </ul>
+  </nav>
 </template>
 
 <script>
 export default {
-    name: 'Nav'
+  name: 'Nav'
 }
 </script>
 
