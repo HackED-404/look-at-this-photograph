@@ -173,8 +173,8 @@ async function upload() {
   margin-top: 60px;
   display: flex;
   flex-direction: column;
-
 }
+
 .dropzone {
   height: fit-content;
   min-height: 200px;
@@ -189,6 +189,7 @@ async function upload() {
   align-items: center;
   margin: 0 auto;
 }
+
 input[type="file"] {
   position: absolute;
   opacity: 0;
@@ -202,6 +203,7 @@ img {
   width: 50%;
   height: 50%;
 }
+
 button {
   background-color: transparent;
   border: 2px solid #e74c3c;
