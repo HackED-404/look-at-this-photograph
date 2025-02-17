@@ -1,7 +1,7 @@
 
 <template>
-  <NuxtLayout>
-    <div>
+
+    
       <div
           class="dropzone"
           @dragover.prevent
@@ -20,7 +20,7 @@
         <img v-bind:src="typeof preview === 'string' ? preview : undefined" />
         <h3 v-if="preview">File name: {{ fileName }}</h3>
       </div>
-    </div>
+    
     <button type="submit" v-on:click="upload">Upload</button>
 
     <TableOfResults
@@ -28,7 +28,6 @@
         :loading="isLoading"
         />
 
-  </NuxtLayout>
 
   
 </template>

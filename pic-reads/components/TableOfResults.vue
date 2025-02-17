@@ -38,11 +38,12 @@ const rows = computed(() => {
 
 <template>
   <UTable
+    class="w-full rounded-lg shadow-md overflow-hidden"
     :loading="loading"
     :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }"
     :progress="{ color: 'primary', animation: 'carousel' }"
     :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No items.' }"
-    class="w-full" 
+     
     :columns="columns" :rows="rows">
   </UTable>
   <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
