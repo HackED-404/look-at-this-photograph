@@ -32,8 +32,10 @@
   
 </template>
 
-<script>
-const results = [{
+<script setup lang="ts">
+import { ref } from 'vue'
+const results = ref([
+  {
   id: 1,
   name: 'Lindsay Walton',
   title: 'Front-end Developer',
@@ -111,54 +113,47 @@ const results = [{
   title: 'Senior Designer',
   email: '',
   role: 'Owner'
-}]
+}
+])
+const fileName = ref('');
+const preview = ref(null);
+const preset = ref('abc');
+const formData = ref(null);
+const cloudName = ref('abc');
+const success = ref('');
 
-export default {
-  name: "App",
-  data() {
-    return {
-      fileName: "",
-      preview: null,
-      preset: "abc",
-      formData: null,
-      cloudName: "abc",
-      success: "",
-    };
-  },
-  methods: {
-    handleFileChange: function (event) {
-      this.file = event.files[0];
-      this.fileName = this.file.name;
+function handleFileChange(event) {
+  const file = event.files[0];
+  fileName.value = file.name;
 
-      this.formData = new FormData();
-      this.formData.append("upload_preset", this.preset);
+  formData.value = new FormData();
+  formData.value.append("upload_preset", preset.value);
 
-      let reader = new FileReader();
-      reader.readAsDataURL(this.file);
+  let reader = new FileReader();
+  reader.readAsDataURL(file);
 
-      reader.onload = (e) => {
-        this.preview = e.target.result;
-        this.formData.append("file", this.preview);
-      };
-    },
-    upload: async function () {
-      const res = await fetch(
-          `https://api.cloudinary.com/v1_1/${this.cloudName}/image/upload`,
-          {
-            method: "POST",
-            body: this.formData,
-          }
-      );
-      /**
-      const data = await res.json();
-      this.fileName = "";
-      this.preview = null;
-      this.formData = null;
-      this.success = data.public_id; */
-    },
+  reader.onload = (e) => {
+    preview.value = e.target.result;
+    formData.value.append("file", preview.value);
+  };
+}
 
-  },
-};
+async function upload() {
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName.value}/image/upload`,
+    {
+      method: "POST",
+      body: formData.value,
+    }
+  );
+  /**
+  const data = await res.json();
+  fileName.value = "";
+  preview.value = null;
+  formData.value = null;
+  success.value = data.public_id;
+  */
+}
 </script>
 
 <style>
