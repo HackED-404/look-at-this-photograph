@@ -1,23 +1,22 @@
 import base64
-from flask import Flask, request, jsonify
-from PIL import Image
 import io
+import logging
+from flask_cors import CORS, cross_origin
+from flask import Flask, request, jsonify
 from integration import getBookTitles
+from PIL import Image
 
 app = Flask(__name__)
-
-
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
-
-def foo(picture):
-    # Placeholder for the actual implementation of foo
-    return f"bar"
+CORS(
+    app,
+    resources={
+        r"/upload": {"origins": "http://localhost:3000", "methods": ["POST", "OPTIONS"]}
+    },
+)
 
 
 @app.route("/upload", methods=["POST"])
+@cross_origin(origins="http://localhost:3000")
 def upload_picture():
     if not request.data:
         return jsonify({"error": "No data provided"}), 400
@@ -42,4 +41,4 @@ def upload_picture():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=8008, debug=True)
