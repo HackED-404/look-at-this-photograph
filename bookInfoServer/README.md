@@ -33,6 +33,16 @@ pip install -e ../ocr ../book_data ../process_image ../integration
 # OR
 pip install -e ../ocr -e ../book_data -e ../process_image -e ../integration
 ```
+10. The book_data service fetches book information from the Google Books. It
+   relies on an API key to do so. The team is storing the key locally and if
+   you don't have it, you have to ask for it (or get your own). The program will
+   detect the key as long as it is stored as follows:
+```bash
+# mac or linux
+export LATP_API_KEY='your_api_key_here'
+# windows
+set LATP_API_KEY='your_api_key_here'
+```
 10. Start up server with the following command:
 ```bash
 python main.py
