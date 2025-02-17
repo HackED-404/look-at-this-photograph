@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useBookStore } from '@/stores/bookStore';
-import { ref, computed } from 'vue';
+import { ref, computed, defineEmits } from 'vue';
 
 interface Book {
   coverImage: string;
@@ -14,6 +14,8 @@ const props = defineProps<{
   books: Book[],
   loading: boolean
 }>();
+const emit = defineEmits(['select']);
+
 const columns = [{
   key: 'coverImage',
   label: 'Picture',
@@ -54,12 +56,6 @@ const totalBookCount = computed(() => {
   return props.books ? props.books.length : 0;
 })
 
-watch(rows, (newRows) => {
-  console.log("Rows updated:", newRows);
-}, { deep: true });
-
-
-
 const bookStore = useBookStore();
 
 // const addToMyBooks = (book) => {
@@ -71,7 +67,8 @@ function addToMyBooks(row) {
 }
 
 function select(row) {
-  return;
+  console.log("Selected row:", row);
+  emit('select', row);
 }
 
 </script>
