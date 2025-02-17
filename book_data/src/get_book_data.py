@@ -55,6 +55,6 @@ def get_book_details(book_name, max_results=1):
             "synopsis": synopsis,
             "cover_image": cover_image,
         }
-        books.append(json.dumps(book))
+        books.append(book)
 
     return books

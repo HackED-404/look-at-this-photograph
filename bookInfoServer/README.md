@@ -10,16 +10,30 @@ with our server to get information about books based on images.
 2. You should have Python 3 installed on your machine.
 3. Install tesseract-ocr on your machine. You can find the installation guide
    [here](https://tesseract-ocr.github.io/tessdoc/Installation.html).
-3. Install the dependencies with the following command:
+4. Set the current working directory to the `bookInfoServer` directory.
+5. Set up a Python virtual environment with the following command:
 ```bash
-pip install -r requirements.txt
+python -m venv venv
 ```
-4. Set your current working directory to the `bookInfoServer` directory.
-5. Install the editable dependencies with the following command:
+6. Activate the virtual environment with the following command:
 ```bash
-pip install -e ../ocr ../bookInfo ../processImage ../integration
+# mac or linux
+source venv/bin/activate
+# windows
+venv\Scripts\activate
 ```
-6. Start up server with the following command:
+7. Install the dependencies with the following command (you may need to check if setup.py has everything that requirements.txt has):
+```bash
+pip install .
+```
+8. Set your current working directory to the `bookInfoServer` directory.
+9. Install the editable dependencies with the following command:
+```bash
+pip install -e ../ocr ../book_data ../process_image ../integration
+# OR
+pip install -e ../ocr -e ../book_data -e ../process_image -e ../integration
+```
+10. Start up server with the following command:
 ```bash
 python main.py
 ```
