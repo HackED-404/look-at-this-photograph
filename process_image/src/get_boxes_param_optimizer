@@ -1,0 +1,160 @@
+import os
+import json
+import cv2
+import numpy as np
+import pandas as pd
+from scipy.optimize import minimize
+from get_boxes import extract_books
+
+# === Configuration ===
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Process_image directory
+IMAGE_FOLDER = os.path.join(BASE_DIR, "handpicked_test_images")  # Folder containing images
+ANNOTATIONS_FILE = os.path.join(IMAGE_FOLDER, "_annotations.csv")  # CSV with labels
+PARAMS_FILE = os.path.join(BASE_DIR, "best_params.json")
+
+# Ensure the annotations file exists
+if not os.path.exists(ANNOTATIONS_FILE):
+    raise FileNotFoundError(f"⚠️ Ground truth file not found: {ANNOTATIONS_FILE}")
+
+# === Load Ground Truth Data ===
+def load_ground_truth():
+    """Loads bounding box annotations from the CSV file."""
+    df = pd.read_csv(ANNOTATIONS_FILE)
+    ground_truth = {}
+    for _, row in df.iterrows():
+        filename = row["filename"]
+        bbox = (row["xmin"], row["ymin"], row["xmax"] - row["xmin"], row["ymax"] - row["ymin"])
+        ground_truth.setdefault(filename, []).append(bbox)
+    return ground_truth
+
+# === Calculate Intersection over Union (IoU) ===
+def iou(boxA, boxB):
+    xA = max(boxA[0], boxB[0])
+    yA = max(boxA[1], boxB[1])
+    xB = min(boxA[0] + boxA[2], boxB[0] + boxB[2])
+    yB = min(boxA[1] + boxA[3], boxB[1] + boxB[3])
+
+    interArea = max(0, xB - xA) * max(0, yB - yA)
+    boxAArea = boxA[2] * boxA[3]
+    boxBArea = boxB[2] * boxB[3]
+
+    return interArea / float(boxAArea + boxBArea - interArea)
+
+# === Optimization Objective Function ===
+best_params = None
+best_iou = 0  # Track highest IoU score
+
+def objective_function(params):
+    global best_params, best_iou
+
+    # Ensure valid odd-numbered values
+    blur_size = int(round(params[0]))
+    if blur_size % 2 == 0:
+        blur_size += 1
+    GAUSSIAN_BLUR_KERNEL = (blur_size, blur_size)
+
+    block_size = int(round(params[1]))
+    if block_size % 2 == 0:
+        block_size += 1
+    if block_size <= 1:
+        block_size = 3
+    ADAPTIVE_THRESH_BLOCK_SIZE = block_size
+
+    # Assign remaining parameters
+    ADAPTIVE_THRESH_C = float(params[2])
+    CANNY_THRESHOLD1 = float(params[3])
+    CANNY_THRESHOLD2 = float(params[4])
+    MIN_WIDTH = float(params[5])
+    MIN_HEIGHT = float(params[6])
+    ASPECT_RATIO_THRESHOLD = float(params[7])
+
+    print(f"🔎 Testing params: {params}")
+
+    # Load ground truth
+    ground_truth_data = load_ground_truth()
+    iou_scores = []
+
+    for filename, ground_truth_boxes in ground_truth_data.items():
+        image_path = os.path.join(IMAGE_FOLDER, filename)
+
+        if not os.path.exists(image_path):
+            print(f"⚠️ Skipping missing image: {image_path}")
+            continue
+
+        # Run book detection
+        detected_boxes, _ = extract_books(
+            image_path=image_path,
+            GAUSSIAN_BLUR_KERNEL=GAUSSIAN_BLUR_KERNEL,
+            ADAPTIVE_THRESH_BLOCK_SIZE=ADAPTIVE_THRESH_BLOCK_SIZE,
+            ADAPTIVE_THRESH_C=ADAPTIVE_THRESH_C,
+            CANNY_THRESHOLD1=CANNY_THRESHOLD1,
+            CANNY_THRESHOLD2=CANNY_THRESHOLD2,
+            MIN_WIDTH=MIN_WIDTH,
+            MIN_HEIGHT=MIN_HEIGHT,
+            ASPECT_RATIO_THRESHOLD=ASPECT_RATIO_THRESHOLD
+        )
+
+        # Compute IoU scores
+        for gt_box in ground_truth_boxes:
+            best_iou_value = max([iou(gt_box, detected_box) for detected_box in detected_boxes] or [0])
+            iou_scores.append(best_iou_value)
+
+    mean_iou = np.mean(iou_scores) if iou_scores else 0  # Prevent division by zero
+
+    # Track best parameters
+    if mean_iou > best_iou:
+        best_iou = mean_iou
+        best_params = params.copy()
+        print(f"🔹 New Best IoU: {best_iou} | Params: {best_params}")
+
+    print(f"📊 Mean IoU: {mean_iou}")
+    return 1 - mean_iou  # Minimize 1 - IoU
+
+# === Optimization Using SciPy's `minimize` ===
+initial_params = [5, 11, 2, 50, 150, 20, 100, 2]
+
+bounds = [
+    (3, 15),  # GAUSSIAN_BLUR_KERNEL (odd enforced inside function)
+    (5, 21),  # ADAPTIVE_THRESH_BLOCK_SIZE (odd enforced inside function)
+    (0, 10),  # ADAPTIVE_THRESH_C
+    (30, 200),  # CANNY_THRESHOLD1
+    (100, 250),  # CANNY_THRESHOLD2
+    (10, 50),  # MIN_WIDTH
+    (50, 200),  # MIN_HEIGHT
+    (1, 5)  # ASPECT_RATIO_THRESHOLD
+]
+
+result = minimize(
+    objective_function,
+    initial_params,
+    method="Powell",
+    bounds=bounds,
+    options={'maxiter': 10000, 'disp': True}  # Removed `tol` since Powell doesn't use it
+)
+
+# === Save the best parameters to a JSON file ===
+if best_params is not None:
+    def ensure_odd(value):
+        """ Rounds to the nearest odd integer. """
+        value = int(round(value))
+        return value if value % 2 == 1 else value + 1
+
+    best_params_dict = {
+        "GAUSSIAN_BLUR_KERNEL": [ensure_odd(best_params[0]), ensure_odd(best_params[0])],
+        "ADAPTIVE_THRESH_BLOCK_SIZE": ensure_odd(best_params[1]),
+        "ADAPTIVE_THRESH_C": float(best_params[2]),
+        "CANNY_THRESHOLD1": float(best_params[3]),
+        "CANNY_THRESHOLD2": float(best_params[4]),
+        "MIN_WIDTH": float(best_params[5]),
+        "MIN_HEIGHT": float(best_params[6]),
+        "ASPECT_RATIO_THRESHOLD": float(best_params[7])
+    }
+
+    with open(PARAMS_FILE, "w") as f:
+        json.dump(best_params_dict, f, indent=4)
+
+    print("\n✅ Best parameters saved to:", PARAMS_FILE)
+
+print("\n✅ Optimization Complete!")
+print("🔹 Best IoU Achieved:", best_iou)
+print("🔹 Best Parameters Found:", best_params)
