@@ -10,6 +10,8 @@ interface Book {
   synopsis: string;
 }
 
+const toast = useToast();
+
 const props = defineProps<{
   books: Book[],
   loading: boolean
@@ -64,6 +66,14 @@ const bookStore = useBookStore();
 
 function addToMyBooks(row) {
   bookStore.addBook(row);
+  // Show toast notification
+  toast.add({
+    title: "Book Added",
+    description: `"${row.title}" has been added to My Books!`,
+    color: "green",
+    icon: "i-heroicons-check-circle", // Heroicons checkmark for success
+    timeout: 3000, // Auto-close after 3 seconds
+  });
 }
 
 function select(row) {
