@@ -44,7 +44,7 @@ def get_book_details(book_name, max_results=1):
         authors = ", ".join(volume_info.get("authors", ["Unknown Author"]))
         rating = volume_info.get("averageRating", "No rating available")
         synopsis = volume_info.get("description", "No synopsis available")
-        cover_image = volume_info.get("imageLinks", {}).get(
+        coverImage = volume_info.get("imageLinks", {}).get(
             "thumbnail", "No image available"
         )
 
@@ -53,7 +53,7 @@ def get_book_details(book_name, max_results=1):
             "authors": authors,
             "rating": rating,
             "synopsis": synopsis,
-            "cover_image": cover_image,
+            "coverImage": coverImage,
         }
         books.append(book)
 
