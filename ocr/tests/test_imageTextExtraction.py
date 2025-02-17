@@ -1,4 +1,5 @@
 import unittest
+import cv2
 
 # filepath: /Users/ryanbott/Projects/look-at-this-photograph/ocr/tests/test_imageTextExtraction.py
 from src.imageTextExtraction import removeSpecialCharacters, getText
@@ -6,12 +7,44 @@ from src.imageTextExtraction import removeSpecialCharacters, getText
 
 class TestImageTextExtraction(unittest.TestCase):
 
-    # def test_extract_text_from_image(self):
-    #     # Example test case
-    #     test_image_path = "path/to/test/image.png"
-    #     expected_text = "Expected text from image"
-    #     result = extract_text_from_image(test_image_path)
-    #     self.assertEqual(result, expected_text)
+    def test_extract_text_from_image_bottom_to_top(self):
+        # Example test case
+        # paths need to be from package root
+        test_image_path = "tests/images/book-bottom-to-top.png"
+        expected_contained_text = "bewilderment"
+
+        # need a numpy image array to pass to getText
+        numpy_image_array = cv2.imread(test_image_path)
+
+        result = getText(numpy_image_array)
+        self.assertIn(expected_contained_text.lower(), result.lower())
+
+    def test_extract_text_from_image_top_to_bottom(self):
+        test_image_path = "tests/images/book-top-to-bottom.png"
+        expected_contained_text = "bewilderment"
+
+        numpy_image_array = cv2.imread(test_image_path)
+
+        result = getText(numpy_image_array)
+        self.assertIn(expected_contained_text.lower(), result.lower())
+
+    def test_extract_text_from_image_right_to_left(self):
+        test_image_path = "tests/images/book-right-to-left.png"
+        expected_contained_text = "bewilderment"
+
+        numpy_image_array = cv2.imread(test_image_path)
+
+        result = getText(numpy_image_array)
+        self.assertIn(expected_contained_text.lower(), result.lower())
+
+    def test_extract_text_from_image_left_to_right(self):
+        test_image_path = "tests/images/book-left-to-right.png"
+        expected_contained_text = "bewilderment"
+
+        numpy_image_array = cv2.imread(test_image_path)
+
+        result = getText(numpy_image_array)
+        self.assertIn(expected_contained_text.lower(), result.lower())
 
     def test_removeSpecialCharacters_with_special_characters(self):
         input_text = "Hello, World!"

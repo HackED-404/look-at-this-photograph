@@ -4,8 +4,8 @@ from get_boxes import extract_books
 from get_book_data import get_book_details
 
 
-def getBookTitles(pictures):
-    # pictures is a file path
+def getBookTitles(picture):
+    # pictures is an Image
 
     _, book_pictures = extract_books(pictures)
 

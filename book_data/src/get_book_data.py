@@ -1,3 +1,4 @@
+import json
 import requests
 from dotenv import load_dotenv
 import os
@@ -33,15 +34,7 @@ def get_book_details(book_name, max_results=1):
     data = response.json()
 
     if "items" not in data:
-        return [
-            Book(
-                book_name,
-                "Unknown Author",
-                "Not found",
-                "Not found",
-                "No image available",
-            )
-        ]
+        return []
 
     books = []
     for item in data["items"]:
@@ -55,6 +48,13 @@ def get_book_details(book_name, max_results=1):
             "thumbnail", "No image available"
         )
 
-        books.append(Book(title, authors, rating, synopsis, cover_image))
+        book = {
+            "title": title,
+            "authors": authors,
+            "rating": rating,
+            "synopsis": synopsis,
+            "cover_image": cover_image,
+        }
+        books.append(book)
 
     return books
