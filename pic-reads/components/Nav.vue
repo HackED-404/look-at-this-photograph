@@ -1,5 +1,7 @@
 <template>
-    <nav>
+    <nav class="nav">
+      <img src="@/public/logo.png" alt="PicReads Logo" class="logo" />
+
         <ul>
             <li>
                 <router-link to="/">Home</router-link>
@@ -21,24 +23,40 @@ export default {
 </script>
 
 <style scoped>
-nav {
+.nav {
   background-color: #333;
   color: #fff;
+  width: 100%;
+  display: flex;
+  padding: 0.5em 1em;
 }
 
-nav ul {
+.nav ul {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
+  justify-content: space-around;
 }
 
-nav ul li {
+.logo {
+  height: 30px;
+  width: auto;
   margin-right: 1em;
 }
 
-nav ul li a {
+.nav ul li {
+  margin-right: 1em;
+}
+
+.nav ul li a {
   color: #fff;
   text-decoration: none;
+  padding: 0.5em 1em;
+  transition: background-color 0.3s;
+}
+
+.nav ul li a:hover {
+  background-color: #555;
 }
 </style>
