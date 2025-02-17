@@ -15,7 +15,7 @@ def load_best_params():
         raise("No best parameters found. Please run the optimization script.")
 
 
-def extract_books(image_path, **kwargs):
+def extract_books(image, **kwargs):
     # Load best parameters if none are provided
     best_params = load_best_params() if not kwargs else kwargs
 
@@ -29,7 +29,10 @@ def extract_books(image_path, **kwargs):
     ASPECT_RATIO_THRESHOLD = best_params["ASPECT_RATIO_THRESHOLD"]
 
     # Load and preprocess the image
-    image = cv2.imread(image_path)
+    image = np.array(image)  # Convert Pillow image to NumPy array
+
+    if image.shape[-1] == 3:  # If RGB, convert to BGR (OpenCV format)
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, GAUSSIAN_BLUR_KERNEL, 0)
     thresh = cv2.adaptiveThreshold(
