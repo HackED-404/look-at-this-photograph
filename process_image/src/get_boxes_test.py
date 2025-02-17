@@ -2,8 +2,8 @@ import cv2
 import os
 from get_boxes import extract_books  # Import the function
 
-# Set the folder containing the images
-IMAGE_FOLDER = "src/handpicked_test_images"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Process_image directory
+IMAGE_FOLDER = os.path.join(BASE_DIR, "handpicked_test_images")  # Folder containing images
 
 # Get a list of all image files in the folder (only jpg, png, etc.)
 image_files = [f for f in os.listdir(IMAGE_FOLDER) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
