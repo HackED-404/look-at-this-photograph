@@ -1,21 +1,10 @@
-
 <template>
-
-    
-      <div
-          class="dropzone"
-          @dragover.prevent
-          @dragenter.prevent
-          @dragstart.prevent
-          @drop.prevent="handleFileChange($event.dataTransfer || $event)"
-      >
-        <input
-            id="file-input"
-            type="file"
-            accept="image/png, image/jpeg"
-            @change="handleFileChange($event.target)"
-            required
-        />
+  <NuxtLayout>
+    <div>
+      <div class="dropzone" @dragover.prevent @dragenter.prevent @dragstart.prevent
+        @drop.prevent="handleFileChange($event.dataTransfer || $event)">
+        <input id="file-input" type="file" accept="image/png, image/jpeg" @change="handleFileChange($event.target)"
+          required />
         <h2 for="file-input">Click or Drag N Drop Image</h2>
         <img v-bind:src="typeof preview === 'string' ? preview : undefined" />
         <h3 v-if="preview">File name: {{ fileName }}</h3>
@@ -23,13 +12,12 @@
     
     <button type="submit" v-on:click="upload">Upload</button>
 
-    <TableOfResults
-        :people="dummyData"
-        :loading="isLoading"
-        />
+    <TableOfResults :people="dummyData" :loading="isLoading" />
+    </div>
+  </NuxtLayout>
 
 
-  
+
 </template>
 
 <script setup lang="ts">
@@ -53,139 +41,136 @@ const success = ref('');
 const isLoading = ref(false);
 
 function handleFileChange(event: Event | DataTransfer) {
-  const file = event.files[0];
-  fileName.value = file.name;
+  const input = event instanceof DataTransfer ? event.files?.[0] : (event.target as HTMLInputElement)?.files?.[0];
+  if (!input) return;
+
+  fileName.value = input.name;
 
   formData.value = new FormData();
   formData.value.append("upload_preset", preset.value);
+  formData.value.append("file", input);
 
   let reader = new FileReader();
-  reader.readAsDataURL(file);
+  reader.readAsDataURL(input);
 
   reader.onload = (e) => {
     if (e.target) {
       preview.value = e.target.result;
     }
-    if (formData.value) {
-      if (preview.value) {
-        const blob = new Blob([preview.value], { type: 'image/jpeg' });
-        formData.value.append("file", blob);
-      }
-    }
   };
 }
 
 async function upload() {
-  try { 
+  try {
     console.log("Uploading.*.*.*.");
     isLoading.value = true;
     const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName.value}/image/upload`,
+      `http://localhost:8008/upload`,
       {
         method: "POST",
+        mode: "no-cors",
         body: formData.value,
-      }
+      },
     );
-    
+
     const data = await res.json();
 
     console.log("Upload Sucessful:", data);
     setTimeout(() => {
-    dummyData.value = [
-  {
-  id: 1,
-  name: 'Lindsay Walton',
-  title: 'Front-end Developer',
-  email: 'lindsay.walton@example.com',
-  role: 'Member'
-}, {
-  id: 2,
-  name: 'Courtney Henry',
-  title: 'Designer',
-  email: 'courtney.henry@example.com',
-  role: 'Admin'
-}, {
-  id: 3,
-  name: 'Tom Cook',
-  title: 'Director of Product',
-  email: 'tom.cook@example.com',
-  role: 'Member'
-}, {
-  id: 4,
-  name: 'Whitney Francis',
-  title: 'Copywriter',
-  email: 'whitney.francis@example.com',
-  role: 'Admin'
-}, {
-  id: 5,
-  name: 'Leonard Krasner',
-  title: 'Senior Designer',
-  email: 'leonard.krasner@example.com',
-  role: 'Owner'
-}, {
-  id: 6,
-  name: 'Floyd Miles',
-  title: 'Principal Designer',
-  email: 'floyd.miles@example.com',
-  role: 'Member'
-}, {
-  id: 7,
-  name: 'Emily Selman',
-  title: 'VP, User Experience',
-  email: '',
-  role: 'Admin'
-}, {
-  id: 8,
-  name: 'Kristin Watson',
-  title: 'VP, Human Resources',
-  email: '',
-  role: 'Member'
-}, {
-  id: 9,
-  name: 'Emma Watson',
-  title: 'Front-end Developer',
-  email: '',
-  role: 'Member'
-}, {
-  id: 10,
-  name: 'John Doe',
-  title: 'Designer',
-  email: '',
-  role: 'Admin'
-}, {
-  id: 11,
-  name: 'Jane Doe',
-  title: 'Director of Product',
-  email: '',
-  role: 'Member'
-}, {
-  id: 12,
-  name: 'John Smith',
-  title: 'Copywriter',
-  email: '',
-  role: 'Admin'
-}, {
-  id: 13,
-  name: 'Jane Smith',
-  title: 'Senior Designer',
-  email: '',
-  role: 'Owner'
-}
-    ];
-    isLoading.value = false;
+      dummyData.value = [
+        {
+          id: 1,
+          name: 'Lindsay Walton',
+          title: 'Front-end Developer',
+          email: 'lindsay.walton@example.com',
+          role: 'Member'
+        }, {
+          id: 2,
+          name: 'Courtney Henry',
+          title: 'Designer',
+          email: 'courtney.henry@example.com',
+          role: 'Admin'
+        }, {
+          id: 3,
+          name: 'Tom Cook',
+          title: 'Director of Product',
+          email: 'tom.cook@example.com',
+          role: 'Member'
+        }, {
+          id: 4,
+          name: 'Whitney Francis',
+          title: 'Copywriter',
+          email: 'whitney.francis@example.com',
+          role: 'Admin'
+        }, {
+          id: 5,
+          name: 'Leonard Krasner',
+          title: 'Senior Designer',
+          email: 'leonard.krasner@example.com',
+          role: 'Owner'
+        }, {
+          id: 6,
+          name: 'Floyd Miles',
+          title: 'Principal Designer',
+          email: 'floyd.miles@example.com',
+          role: 'Member'
+        }, {
+          id: 7,
+          name: 'Emily Selman',
+          title: 'VP, User Experience',
+          email: '',
+          role: 'Admin'
+        }, {
+          id: 8,
+          name: 'Kristin Watson',
+          title: 'VP, Human Resources',
+          email: '',
+          role: 'Member'
+        }, {
+          id: 9,
+          name: 'Emma Watson',
+          title: 'Front-end Developer',
+          email: '',
+          role: 'Member'
+        }, {
+          id: 10,
+          name: 'John Doe',
+          title: 'Designer',
+          email: '',
+          role: 'Admin'
+        }, {
+          id: 11,
+          name: 'Jane Doe',
+          title: 'Director of Product',
+          email: '',
+          role: 'Member'
+        }, {
+          id: 12,
+          name: 'John Smith',
+          title: 'Copywriter',
+          email: '',
+          role: 'Admin'
+        }, {
+          id: 13,
+          name: 'Jane Smith',
+          title: 'Senior Designer',
+          email: '',
+          role: 'Owner'
+        }
+      ];
+      isLoading.value = false;
     }, 3000);
 
     fileName.value = "";
     preview.value = null;
     formData.value = null;
     success.value = data.public_id;
-    
+
 
   } catch (error) {
     console.error("Error:", error);
-  } finally {
-    
-  }};
+  }
+};
 </script>
 
 <style>
