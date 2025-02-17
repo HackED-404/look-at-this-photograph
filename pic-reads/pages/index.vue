@@ -1,5 +1,4 @@
 <template>
-
   <div>
     <div class="dropzone" @dragover.prevent @dragenter.prevent @dragstart.prevent
       @drop.prevent="handleFileChange($event.dataTransfer || $event)">
@@ -13,10 +12,6 @@
 
     <TableOfResults :books="books" :loading="isLoading" />
   </div>
-
-
-
-
 </template>
 
 <script setup lang="ts">
