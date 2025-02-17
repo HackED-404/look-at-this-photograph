@@ -4,7 +4,27 @@ import logging
 from flask_cors import CORS, cross_origin
 from flask import Flask, request, jsonify
 from integration import getBookTitles
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
+from logging.config import dictConfig
+
+dictConfig(
+    {
+        "version": 1,
+        "formatters": {
+            "default": {
+                "format": "[%(asctime)s] %(levelname)s in %(module)s: %(message)s",
+            }
+        },
+        "handlers": {
+            "wsgi": {
+                "class": "logging.StreamHandler",
+                "stream": "ext://sys.stdout",  # <-- Solution
+                "formatter": "default",
+            }
+        },
+        "root": {"level": "INFO", "handlers": ["wsgi"]},
+    }
+)
 
 app = Flask(__name__)
 CORS(
@@ -18,26 +38,26 @@ CORS(
 @app.route("/upload", methods=["POST"])
 @cross_origin(origins="http://localhost:3000")
 def upload_picture():
-    if not request.data:
-        return jsonify({"error": "No data provided"}), 400
+    if "file" not in request.files:
+        return jsonify({"error": "No file part in the request"}), 400
 
-    print(f"Request Content-Type: {request.content_type}")  # Debugging
-    # print(f"Request Data: {request.data}")  # Debugging
-    # incoming request with base 64 image.
-    data = request.get_json(force=True)
-    if "picture" not in data:
-        return jsonify({"error": "No image field in request"}), 400
+    file_data = request.files["file"]
+    if not file_data:
+        return jsonify({"error": "No selected file"}), 400
+    if file_data.content_type not in ["image/jpeg", "image/png", "image/gif"]:
+        return "Invalid file type", 400
 
-    # Decode the Base64 string
-    image_data = base64.b64decode(data["picture"])
+    # Decode the base64-encoded image data
+    logging.info(f"Type of file_data: {type(file_data)}")
+    logging.info(f"File data: {file_data}")
+    file_data.seek(0)
+    image_stream = io.BytesIO(file_data.read())
+    image = Image.open(image_stream)
 
-    # Convert to an image
-    image = Image.open(io.BytesIO(image_data))
-
-    # this is an array.
+    # Get book titles from image
     result = getBookTitles(image)
 
-    return result
+    return jsonify(result)
 
 
 if __name__ == "__main__":
