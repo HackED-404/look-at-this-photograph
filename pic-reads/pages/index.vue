@@ -1,35 +1,71 @@
+<script setup>
+
+const fileName = ref('');
+const preview = ref(null);
+const preset = 'abc';
+const formData = ref(null);
+const cloudName = 'abc';
+const success = ref('');
+const isVisible = ref(true);
+const isHidden = ref(false);
+
+const handleFileChange = (event) => {
+  const file = event.files[0];
+  fileName.value = file.name;
+
+  formData.value = new FormData();
+  formData.value.append('upload_preset', preset);
+
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+
+  reader.onload = (e) => {
+    preview.value = e.target.result;
+    formData.value.append('file', preview.value);
+  };
+};
+
+const upload = async () => {
+  if (!formData.value) return;
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    {
+      method: 'POST',
+      body: formData.value,
+    }
+  );
+
+  const data = await res.json();
+  fileName.value = '';
+  preview.value = null;
+  formData.value = null;
+  success.value = data.public_id;
+  toggleVisibility();
+};
+
+const toggleVisibility = () => {
+  isVisible.value = !isVisible.value;
+  isHidden.value = !isHidden.value;
+};
+</script>
 
 <template>
-  <NuxtLayout>
-    <div>
-      <div
-          class="dropzone"
-          @dragover.prevent
-          @dragenter.prevent
-          @dragstart.prevent
-          @drop.prevent="handleFileChange($event.dataTransfer)"
-      >
-        <input
-            id="file-input"
-            type="file"
-            accept="image/png, image/jpeg"
-            @change="handleFileChange($event.target)"
-            required
-        />
-        <h2 for="file-input">Click or Drag N Drop Image</h2>
-        <img v-bind:src="preview" />
-        <h3 v-if="preview">File name: {{ fileName }}</h3>
-      </div>
-    </div>
-    <button type="submit" v-on:click="upload">Upload</button>
+  <div v-if="isVisible" class="dropzone" @dragover.prevent @dragenter.prevent @dragstart.prevent
+    @drop.prevent="handleFileChange($event.dataTransfer)">
+    <input id="file-input" type="file" accept="image/png, image/jpeg" @change="handleFileChange($event.target)"
+      required />
+    <h2 for="file-input">Click or Drag N Drop Image</h2>
+    <img v-bind:src="preview" />
+    <h3 v-if="preview">File name: {{ fileName }}</h3>
+  </div>
 
-    <TableOfResults
-        
-        :people="results"></TableOfResults>
+  <div v-if="isHidden">
+    <TableOfResults></TableOfResults>
+  </div>
 
-  </NuxtLayout>
-
-  
+  <button type="submit" v-if="isVisible" @click="upload">Upload</button>
+  <button type="submit" v-if="isHidden" @click="toggleVisibility">New Image</button>
 </template>
 
 <script setup lang="ts">
@@ -166,8 +202,8 @@ async function upload() {
   margin-top: 60px;
   display: flex;
   flex-direction: column;
-
 }
+
 .dropzone {
   height: fit-content;
   min-height: 200px;
@@ -182,6 +218,7 @@ async function upload() {
   align-items: center;
   margin: 0 auto;
 }
+
 input[type="file"] {
   position: absolute;
   opacity: 0;
@@ -195,6 +232,7 @@ img {
   width: 50%;
   height: 50%;
 }
+
 button {
   background-color: transparent;
   border: 2px solid #e74c3c;
