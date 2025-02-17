@@ -7,7 +7,7 @@ from get_book_data import get_book_details
 def getBookTitles(picture):
     # pictures is an Image
 
-    _, book_pictures = extract_books(pictures)
+    _, book_pictures = extract_books(picture)
 
     results_words = []
     for book_picture in book_pictures:
