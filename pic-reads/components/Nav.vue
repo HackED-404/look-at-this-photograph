@@ -26,8 +26,9 @@ export default {
 .nav {
   background-color: #333;
   color: #fff;
-  width: 100%; /* Ensure the nav spans the full width */
-  padding: 1em; /* Add padding for better spacing */
+  width: 100%;
+  display: flex;
+  padding: 0.5em 1em;
 }
 
 .nav ul {
@@ -35,12 +36,12 @@ export default {
   padding: 0;
   margin: 0;
   display: flex;
-  justify-content: space-around; /* Distribute space evenly between items */
+  justify-content: space-around;
 }
 
 .logo {
-  height: 40px; /* Adjust the height as needed */
-  width: auto; /* Maintain aspect ratio */
+  height: 30px;
+  width: auto;
   margin-right: 1em;
 }
 
@@ -51,11 +52,11 @@ export default {
 .nav ul li a {
   color: #fff;
   text-decoration: none;
-  padding: 0.5em 1em; /* Add padding to links */
-  transition: background-color 0.3s; /* Add transition for hover effect */
+  padding: 0.5em 1em;
+  transition: background-color 0.3s;
 }
 
 .nav ul li a:hover {
-  background-color: #555; /* Change background color on hover */
+  background-color: #555;
 }
 </style>
