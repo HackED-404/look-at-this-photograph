@@ -3,7 +3,7 @@ import os
 from get_boxes import extract_books  # Import the function
 
 # Set the folder containing the images
-IMAGE_FOLDER = "src/handpicked_test_images"
+IMAGE_FOLDER = "process_image/src/handpicked_test_images"
 
 # Get a list of all image files in the folder (only jpg, png, etc.)
 image_files = [f for f in os.listdir(IMAGE_FOLDER) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]

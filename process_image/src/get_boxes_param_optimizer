@@ -47,13 +47,7 @@ best_iou = 0  # Track highest IoU score
 def objective_function(params):
     global best_params, best_iou
 
-    # Ensure valid odd-numbered values
-    blur_size = int(round(params[0]))
-    if blur_size % 2 == 0:
-        blur_size += 1
-    GAUSSIAN_BLUR_KERNEL = (blur_size, blur_size)
-
-    block_size = int(round(params[1]))
+    block_size = int(round(params[0]))
     if block_size % 2 == 0:
         block_size += 1
     if block_size <= 1:
@@ -61,12 +55,12 @@ def objective_function(params):
     ADAPTIVE_THRESH_BLOCK_SIZE = block_size
 
     # Assign remaining parameters
-    ADAPTIVE_THRESH_C = float(params[2])
-    CANNY_THRESHOLD1 = float(params[3])
-    CANNY_THRESHOLD2 = float(params[4])
-    MIN_WIDTH = float(params[5])
-    MIN_HEIGHT = float(params[6])
-    ASPECT_RATIO_THRESHOLD = float(params[7])
+    ADAPTIVE_THRESH_C = float(params[1])
+    CANNY_THRESHOLD1 = float(params[2])
+    CANNY_THRESHOLD2 = float(params[3])
+    MIN_WIDTH = float(params[4])
+    MIN_HEIGHT = float(params[5])
+    ASPECT_RATIO_THRESHOLD = float(params[6])
 
     print(f"🔎 Testing params: {params}")
 
@@ -84,7 +78,6 @@ def objective_function(params):
         # Run book detection
         detected_boxes, _ = extract_books(
             image_path=image_path,
-            GAUSSIAN_BLUR_KERNEL=GAUSSIAN_BLUR_KERNEL,
             ADAPTIVE_THRESH_BLOCK_SIZE=ADAPTIVE_THRESH_BLOCK_SIZE,
             ADAPTIVE_THRESH_C=ADAPTIVE_THRESH_C,
             CANNY_THRESHOLD1=CANNY_THRESHOLD1,
@@ -111,10 +104,9 @@ def objective_function(params):
     return 1 - mean_iou  # Minimize 1 - IoU
 
 # === Optimization Using SciPy's `minimize` ===
-initial_params = [5, 11, 2, 50, 150, 20, 100, 2]
+initial_params = [11, 2, 50, 150, 20, 100, 2]
 
 bounds = [
-    (3, 15),  # GAUSSIAN_BLUR_KERNEL (odd enforced inside function)
     (5, 21),  # ADAPTIVE_THRESH_BLOCK_SIZE (odd enforced inside function)
     (0, 10),  # ADAPTIVE_THRESH_C
     (30, 200),  # CANNY_THRESHOLD1
@@ -140,14 +132,13 @@ if best_params is not None:
         return value if value % 2 == 1 else value + 1
 
     best_params_dict = {
-        "GAUSSIAN_BLUR_KERNEL": [ensure_odd(best_params[0]), ensure_odd(best_params[0])],
-        "ADAPTIVE_THRESH_BLOCK_SIZE": ensure_odd(best_params[1]),
-        "ADAPTIVE_THRESH_C": float(best_params[2]),
-        "CANNY_THRESHOLD1": float(best_params[3]),
-        "CANNY_THRESHOLD2": float(best_params[4]),
-        "MIN_WIDTH": float(best_params[5]),
-        "MIN_HEIGHT": float(best_params[6]),
-        "ASPECT_RATIO_THRESHOLD": float(best_params[7])
+        "ADAPTIVE_THRESH_BLOCK_SIZE": ensure_odd(best_params[0]),
+        "ADAPTIVE_THRESH_C": float(best_params[1]),
+        "CANNY_THRESHOLD1": float(best_params[2]),
+        "CANNY_THRESHOLD2": float(best_params[3]),
+        "MIN_WIDTH": float(best_params[4]),
+        "MIN_HEIGHT": float(best_params[5]),
+        "ASPECT_RATIO_THRESHOLD": float(best_params[6])
     }
 
     with open(PARAMS_FILE, "w") as f:
