@@ -4,7 +4,7 @@ import json
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Process_image directory
-PARAMS_FILE = os.path.join(BASE_DIR, "best_params.json")
+PARAMS_FILE = os.path.join(BASE_DIR, "best_params_default.json")
 
 def load_best_params():
     """ Load best parameters from JSON file if available. """
