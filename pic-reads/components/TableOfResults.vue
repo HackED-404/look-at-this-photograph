@@ -1,8 +1,23 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-
+const columns = [{
+  key: 'id',
+  label: 'ID'
+}, {
+  key: 'name',
+  label: 'User name'
+}, {
+  key: 'title',
+  label: 'Job position'
+}, {
+  key: 'email',
+  label: 'Email'
+}, {
+  key: 'role'
+}]
 const props = defineProps<{
-  people: Array<{ id: string, name: string, title: string, email: string, role: string }>
+  people: Array<{ id: string, name: string, title: string, email: string, role: string }>,
+  
 }>();
 
 
@@ -19,6 +34,8 @@ const rows = computed(() => {
 </script>
 
 <template>
+  <UTable :columns="columns" :rows="rows" />
+  <!--
   <div class="overflow-x-auto">
     <table class="min-w-full bg-white dark:bg-gray-800">
       <thead>
@@ -39,7 +56,7 @@ const rows = computed(() => {
       </tbody>
     </table>
   </div>
- <!-- <div v-if="props.people && props.people.length > 0">  
+  <div v-if="props.people && props.people.length > 0">  
 
     <UTable>
       <template #default="{ row }">
