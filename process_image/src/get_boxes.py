@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 
-def extract_books(image_path):
+
+def extract_books(image):
     # =============================
     # Adjustable Parameters
     # =============================
@@ -17,12 +18,15 @@ def extract_books(image_path):
     MIN_WIDTH = 20  # Minimum width of detected book spines
     MIN_HEIGHT = 100  # Minimum height of detected book spines
     ASPECT_RATIO_THRESHOLD = 2  # Minimum height-to-width ratio for books
-    
+
     # =============================
     # Load and Preprocess Image
     # =============================
-    image = cv2.imread(image_path)
-    
+    image = np.array(image)  # Convert Pillow image to NumPy array
+
+    if image.shape[-1] == 3:  # If RGB, convert to BGR (OpenCV format)
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
