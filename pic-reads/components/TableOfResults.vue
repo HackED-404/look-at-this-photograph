@@ -1,98 +1,76 @@
 <script setup lang="ts">
-const people = [{
-  id: 1,
-  name: 'Lindsay Walton',
-  title: 'Front-end Developer',
-  email: 'lindsay.walton@example.com',
-  role: 'Member'
+import { ref, computed } from 'vue';
+
+const props = defineProps<{
+  people: Array<{ id: number, name: string, title: string, email: string, role: string }>
+}>();
+const columns = [{
+  key: 'id',
+  label: 'ID'
+},
+{
+  key: 'name',
+  label: 'Name'
 }, {
-  id: 2,
-  name: 'Courtney Henry',
-  title: 'Designer',
-  email: 'courtney.henry@example.com',
-  role: 'Admin'
+  key: 'title',
+  label: 'Title'
 }, {
-  id: 3,
-  name: 'Tom Cook',
-  title: 'Director of Product',
-  email: 'tom.cook@example.com',
-  role: 'Member'
+  key: 'email',
+  label: 'Email'
 }, {
-  id: 4,
-  name: 'Whitney Francis',
-  title: 'Copywriter',
-  email: 'whitney.francis@example.com',
-  role: 'Admin'
-}, {
-  id: 5,
-  name: 'Leonard Krasner',
-  title: 'Senior Designer',
-  email: 'leonard.krasner@example.com',
-  role: 'Owner'
-}, {
-  id: 6,
-  name: 'Floyd Miles',
-  title: 'Principal Designer',
-  email: 'floyd.miles@example.com',
-  role: 'Member'
-}, {
-  id: 7,
-  name: 'Emily Selman',
-  title: 'VP, User Experience',
-  email: '',
-  role: 'Admin'
-}, {
-  id: 8,
-  name: 'Kristin Watson',
-  title: 'VP, Human Resources',
-  email: '',
-  role: 'Member'
-}, {
-  id: 9,
-  name: 'Emma Watson',
-  title: 'Front-end Developer',
-  email: '',
-  role: 'Member'
-}, {
-  id: 10,
-  name: 'John Doe',
-  title: 'Designer',
-  email: '',
-  role: 'Admin'
-}, {
-  id: 11,
-  name: 'Jane Doe',
-  title: 'Director of Product',
-  email: '',
-  role: 'Member'
-}, {
-  id: 12,
-  name: 'John Smith',
-  title: 'Copywriter',
-  email: '',
-  role: 'Admin'
-}, {
-  id: 13,
-  name: 'Jane Smith',
-  title: 'Senior Designer',
-  email: '',
-  role: 'Owner'
+  key: 'role',
+  label: 'Role'
 }]
+
+
+
+ console.log(props.people);
+
 
 const page = ref(1)
 const pageCount = 8
 
 const rows = computed(() => {
-  return people.slice((page.value - 1) * pageCount, (page.value) * pageCount)
+  return props.people ? props.people.slice((page.value - 1) * pageCount, (page.value) * pageCount) : [];
 })
 </script>
 
 <template>
-  <div>
-    <UTable :rows="rows" />
+  <UTable :columns="columns" :rows="rows"></UTable>
+ <!-- <div class="overflow-x-auto">
+    <table class="min-w-full bg-white dark:bg-gray-800">
+      <thead>
+        <tr>
+          <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Name</th>
+          <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Title</th>
+          <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Email</th>
+          <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Role</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        <tr v-for="person in rows" :key="person.id">
+          <td class="py-4 px-6 whitespace-nowrap dark:text-gray-200">{{ person.name }}</td>
+          <td class="py-4 px-6 whitespace-nowrap dark:text-gray-200">{{ person.title }}</td>
+          <td class="py-4 px-6 whitespace-nowrap dark:text-gray-200">{{ person.email }}</td>
+          <td class="py-4 px-6 whitespace-nowrap dark:text-gray-200">{{ person.role }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+ <div v-if="props.people && props.people.length > 0">  
+
+    <UTable>
+      <template #default="{ row }">
+        <tr v-for="person in rows" :key="person.id">
+          <td v-for="(value, key) in person" :key="key">{{ key }}: {{ value }}</td>
+        </tr>
+      </tr>
+      </template>
+    </UTable>-->
 
     <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
-      <UPagination v-model="page" :page-count="pageCount" :total="people.length" />
+      <UPagination v-model="page" :page-count="pageCount" :total="props.people.length" />
     </div>
-  </div>
+  
+
 </template>

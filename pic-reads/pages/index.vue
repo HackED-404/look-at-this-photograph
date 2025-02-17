@@ -1,72 +1,167 @@
-<script setup>
 
+<template>
+  <NuxtLayout>
+    <div>
+      <div
+          class="dropzone"
+          @dragover.prevent
+          @dragenter.prevent
+          @dragstart.prevent
+          @drop.prevent="handleFileChange($event.dataTransfer || $event)"
+      >
+        <input
+            id="file-input"
+            type="file"
+            accept="image/png, image/jpeg"
+            @change="handleFileChange($event.target)"
+            required
+        />
+        <h2 for="file-input">Click or Drag N Drop Image</h2>
+        <img v-bind:src="typeof preview === 'string' ? preview : undefined" />
+        <h3 v-if="preview">File name: {{ fileName }}</h3>
+      </div>
+    </div>
+    <button type="submit" v-on:click="upload">Upload</button>
+
+    <TableOfResults
+        
+        :people="results"></TableOfResults>
+
+  </NuxtLayout>
+
+  
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+const results = ref([
+  {
+  id: 1,
+  name: 'Lindsay Walton',
+  title: 'Front-end Developer',
+  email: 'lindsay.walton@example.com',
+  role: 'Member'
+}, {
+  id: 2,
+  name: 'Courtney Henry',
+  title: 'Designer',
+  email: 'courtney.henry@example.com',
+  role: 'Admin'
+}, {
+  id: 3,
+  name: 'Tom Cook',
+  title: 'Director of Product',
+  email: 'tom.cook@example.com',
+  role: 'Member'
+}, {
+  id: 4,
+  name: 'Whitney Francis',
+  title: 'Copywriter',
+  email: 'whitney.francis@example.com',
+  role: 'Admin'
+}, {
+  id: 5,
+  name: 'Leonard Krasner',
+  title: 'Senior Designer',
+  email: 'leonard.krasner@example.com',
+  role: 'Owner'
+}, {
+  id: 6,
+  name: 'Floyd Miles',
+  title: 'Principal Designer',
+  email: 'floyd.miles@example.com',
+  role: 'Member'
+}, {
+  id: 7,
+  name: 'Emily Selman',
+  title: 'VP, User Experience',
+  email: '',
+  role: 'Admin'
+}, {
+  id: 8,
+  name: 'Kristin Watson',
+  title: 'VP, Human Resources',
+  email: '',
+  role: 'Member'
+}, {
+  id: 9,
+  name: 'Emma Watson',
+  title: 'Front-end Developer',
+  email: '',
+  role: 'Member'
+}, {
+  id: 10,
+  name: 'John Doe',
+  title: 'Designer',
+  email: '',
+  role: 'Admin'
+}, {
+  id: 11,
+  name: 'Jane Doe',
+  title: 'Director of Product',
+  email: '',
+  role: 'Member'
+}, {
+  id: 12,
+  name: 'John Smith',
+  title: 'Copywriter',
+  email: '',
+  role: 'Admin'
+}, {
+  id: 13,
+  name: 'Jane Smith',
+  title: 'Senior Designer',
+  email: '',
+  role: 'Owner'
+}
+])
 const fileName = ref('');
-const preview = ref(null);
-const preset = 'abc';
-const formData = ref(null);
-const cloudName = 'abc';
+const preview = ref<string | ArrayBuffer | null>(null);
+const preset = ref('abc');
+const formData = ref<FormData | null>(null);
+const cloudName = ref('abc');
 const success = ref('');
-const isVisible = ref(true);
-const isHidden = ref(false);
 
-const handleFileChange = (event) => {
+function handleFileChange(event: Event | DataTransfer) {
   const file = event.files[0];
   fileName.value = file.name;
 
   formData.value = new FormData();
-  formData.value.append('upload_preset', preset);
+  formData.value.append("upload_preset", preset.value);
 
-  const reader = new FileReader();
+  let reader = new FileReader();
   reader.readAsDataURL(file);
 
   reader.onload = (e) => {
-    preview.value = e.target.result;
-    formData.value.append('file', preview.value);
+    if (e.target) {
+      preview.value = e.target.result;
+    }
+    if (formData.value) {
+      if (preview.value) {
+        const blob = new Blob([preview.value], { type: 'image/jpeg' });
+        formData.value.append("file", blob);
+      }
+    }
   };
-};
+}
 
-const upload = async () => {
-  if (!formData.value) return;
-
+async function upload() {
   const res = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    `https://api.cloudinary.com/v1_1/${cloudName.value}/image/upload`,
     {
-      method: 'POST',
+      method: "POST",
       body: formData.value,
     }
   );
-
+  
   const data = await res.json();
-  fileName.value = '';
+  fileName.value = "";
   preview.value = null;
   formData.value = null;
   success.value = data.public_id;
-  toggleVisibility();
-};
-
-const toggleVisibility = () => {
-  isVisible.value = !isVisible.value;
-  isHidden.value = !isHidden.value;
-};
+  
+}
 </script>
-
-<template>
-  <div v-if="isVisible" class="dropzone" @dragover.prevent @dragenter.prevent @dragstart.prevent
-    @drop.prevent="handleFileChange($event.dataTransfer)">
-    <input id="file-input" type="file" accept="image/png, image/jpeg" @change="handleFileChange($event.target)"
-      required />
-    <h2 for="file-input">Click or Drag N Drop Image</h2>
-    <img v-bind:src="preview" />
-    <h3 v-if="preview">File name: {{ fileName }}</h3>
-  </div>
-
-  <div v-if="isHidden">
-    <TableOfResults></TableOfResults>
-  </div>
-
-  <button type="submit" v-if="isVisible" @click="upload">Upload</button>
-  <button type="submit" v-if="isHidden" @click="toggleVisibility">New Image</button>
-</template>
 
 <style>
 #app {
