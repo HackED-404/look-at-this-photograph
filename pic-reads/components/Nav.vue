@@ -37,10 +37,12 @@ export default {
   margin: 0;
   display: flex;
   justify-content: space-around;
+  font-size: 25px;
+  align-items: center;
 }
 
 .logo {
-  height: 30px;
+  height: 50px;
   width: auto;
   margin-right: 1em;
 }
