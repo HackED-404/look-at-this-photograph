@@ -2,8 +2,25 @@
 import { ref, computed } from 'vue';
 
 const props = defineProps<{
-  people: Array<{ id: string, name: string, title: string, email: string, role: string }>
+  people: Array<{ id: number, name: string, title: string, email: string, role: string }>
 }>();
+const columns = [{
+  key: 'id',
+  label: 'ID'
+},
+{
+  key: 'name',
+  label: 'Name'
+}, {
+  key: 'title',
+  label: 'Title'
+}, {
+  key: 'email',
+  label: 'Email'
+}, {
+  key: 'role',
+  label: 'Role'
+}]
 
 
 
@@ -19,7 +36,8 @@ const rows = computed(() => {
 </script>
 
 <template>
-  <div class="overflow-x-auto">
+  <UTable :columns="columns" :rows="rows"></UTable>
+ <!-- <div class="overflow-x-auto">
     <table class="min-w-full bg-white dark:bg-gray-800">
       <thead>
         <tr>
@@ -39,7 +57,7 @@ const rows = computed(() => {
       </tbody>
     </table>
   </div>
- <!-- <div v-if="props.people && props.people.length > 0">  
+ <div v-if="props.people && props.people.length > 0">  
 
     <UTable>
       <template #default="{ row }">

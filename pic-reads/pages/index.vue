@@ -7,7 +7,7 @@
           @dragover.prevent
           @dragenter.prevent
           @dragstart.prevent
-          @drop.prevent="handleFileChange($event.dataTransfer)"
+          @drop.prevent="handleFileChange($event.dataTransfer || $event)"
       >
         <input
             id="file-input"
@@ -17,7 +17,7 @@
             required
         />
         <h2 for="file-input">Click or Drag N Drop Image</h2>
-        <img v-bind:src="preview" />
+        <img v-bind:src="typeof preview === 'string' ? preview : undefined" />
         <h3 v-if="preview">File name: {{ fileName }}</h3>
       </div>
     </div>
@@ -116,13 +116,13 @@ const results = ref([
 }
 ])
 const fileName = ref('');
-const preview = ref(null);
+const preview = ref<string | ArrayBuffer | null>(null);
 const preset = ref('abc');
-const formData = ref(null);
+const formData = ref<FormData | null>(null);
 const cloudName = ref('abc');
 const success = ref('');
 
-function handleFileChange(event) {
+function handleFileChange(event: Event | DataTransfer) {
   const file = event.files[0];
   fileName.value = file.name;
 
@@ -133,8 +133,15 @@ function handleFileChange(event) {
   reader.readAsDataURL(file);
 
   reader.onload = (e) => {
-    preview.value = e.target.result;
-    formData.value.append("file", preview.value);
+    if (e.target) {
+      preview.value = e.target.result;
+    }
+    if (formData.value) {
+      if (preview.value) {
+        const blob = new Blob([preview.value], { type: 'image/jpeg' });
+        formData.value.append("file", blob);
+      }
+    }
   };
 }
 
@@ -146,13 +153,13 @@ async function upload() {
       body: formData.value,
     }
   );
-  /**
+  
   const data = await res.json();
   fileName.value = "";
   preview.value = null;
   formData.value = null;
   success.value = data.public_id;
-  */
+  
 }
 </script>
 
