@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout>
+
     <div>
       <div class="dropzone" @dragover.prevent @dragenter.prevent @dragstart.prevent
         @drop.prevent="handleFileChange($event.dataTransfer || $event)">
@@ -14,7 +14,7 @@
 
     <TableOfResults :people="dummyData" :loading="isLoading" />
     </div>
-  </NuxtLayout>
+
 
 
 
