@@ -24,8 +24,9 @@
     <button type="submit" v-on:click="upload">Upload</button>
 
     <TableOfResults
-        
-        :people="results"></TableOfResults>
+        :people="dummyData"
+        :loading="isLoading"
+        />
 
   </NuxtLayout>
 
@@ -34,7 +35,64 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-const results = ref([
+interface Person {
+  id: number;
+  name: string;
+  title: string;
+  email: string;
+  role: string;
+}
+
+const dummyData = ref<Person[]>([])
+
+const fileName = ref('');
+const preview = ref<string | ArrayBuffer | null>(null);
+const preset = ref('abc');
+const formData = ref<FormData | null>(null);
+const cloudName = ref('abc');
+const success = ref('');
+const isLoading = ref(false);
+
+function handleFileChange(event: Event | DataTransfer) {
+  const file = event.files[0];
+  fileName.value = file.name;
+
+  formData.value = new FormData();
+  formData.value.append("upload_preset", preset.value);
+
+  let reader = new FileReader();
+  reader.readAsDataURL(file);
+
+  reader.onload = (e) => {
+    if (e.target) {
+      preview.value = e.target.result;
+    }
+    if (formData.value) {
+      if (preview.value) {
+        const blob = new Blob([preview.value], { type: 'image/jpeg' });
+        formData.value.append("file", blob);
+      }
+    }
+  };
+}
+
+async function upload() {
+  try { 
+    console.log("Uploading.*.*.*.");
+    isLoading.value = true;
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName.value}/image/upload`,
+      {
+        method: "POST",
+        body: formData.value,
+      }
+    );
+    
+    const data = await res.json();
+
+    console.log("Upload Sucessful:", data);
+    setTimeout(() => {
+    dummyData.value = [
   {
   id: 1,
   name: 'Lindsay Walton',
@@ -114,53 +172,21 @@ const results = ref([
   email: '',
   role: 'Owner'
 }
-])
-const fileName = ref('');
-const preview = ref<string | ArrayBuffer | null>(null);
-const preset = ref('abc');
-const formData = ref<FormData | null>(null);
-const cloudName = ref('abc');
-const success = ref('');
+    ];
+    isLoading.value = false;
+    }, 3000);
 
-function handleFileChange(event: Event | DataTransfer) {
-  const file = event.files[0];
-  fileName.value = file.name;
+    fileName.value = "";
+    preview.value = null;
+    formData.value = null;
+    success.value = data.public_id;
+    
 
-  formData.value = new FormData();
-  formData.value.append("upload_preset", preset.value);
-
-  let reader = new FileReader();
-  reader.readAsDataURL(file);
-
-  reader.onload = (e) => {
-    if (e.target) {
-      preview.value = e.target.result;
-    }
-    if (formData.value) {
-      if (preview.value) {
-        const blob = new Blob([preview.value], { type: 'image/jpeg' });
-        formData.value.append("file", blob);
-      }
-    }
-  };
-}
-
-async function upload() {
-  const res = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName.value}/image/upload`,
-    {
-      method: "POST",
-      body: formData.value,
-    }
-  );
-  
-  const data = await res.json();
-  fileName.value = "";
-  preview.value = null;
-  formData.value = null;
-  success.value = data.public_id;
-  
-}
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    
+  }};
 </script>
 
 <style>
