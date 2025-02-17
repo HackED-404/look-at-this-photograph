@@ -1,54 +1,75 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 
+interface Book {
+  coverImage: string;
+  title: string;
+  authors: string | string[];
+  rating: number;
+  synopsis: string;
+}
+
 const props = defineProps<{
-  people: Array<{ id: number, name: string, title: string, email: string, role: string }>
+  books: Book[],
   loading: boolean
 }>();
 const columns = [{
-  key: 'id',
-  label: 'ID'
+  key: 'coverImage',
+  label: 'Picture',
+  slot: 'coverImage-data'
 },
 {
-  key: 'name',
-  label: 'Name'
-}, {
   key: 'title',
   label: 'Title'
 }, {
-  key: 'email',
-  label: 'Email'
+  key: 'authors',
+  label: 'Authors'
 }, {
-  key: 'role',
-  label: 'Role'
+  key: 'rating',
+  label: 'Rating'
+}, {
+  key: 'synopsis',
+  label: 'Synopsis'
 }]
 
 
 
- console.log(props.people);
+console.log(props.books);
 
 
 const page = ref(1)
 const pageCount = 10
 
 const rows = computed(() => {
-  return props.people ? props.people.slice((page.value - 1) * pageCount, (page.value) * pageCount) : [];
+  return props.books ? props.books.slice((page.value - 1) * pageCount, (page.value) * pageCount) : [];
 })
+
+const totalBookCount = computed(() => {
+  return props.books ? props.books.length : 0;
+})
+
+watch(rows, (newRows) => {
+  console.log("Rows updated:", newRows);
+}, { deep: true });
+
 </script>
 
 <template>
-  <UTable
-    class="w-full rounded-lg shadow-md overflow-hidden"
-    :loading="loading"
+  <UTable class="w-full rounded-lg shadow-md overflow-hidden" :loading="loading"
     :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }"
     :progress="{ color: 'primary', animation: 'carousel' }"
-    :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No items.' }"
-     
-    :columns="columns" :rows="rows">
+    :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No items.' }" :columns="columns" :rows="rows">
+    <template #coverImage-data="{ row }">
+      <img :src="row.coverImage" alt="cover" class="w-12 h-12 rounded-lg" />
+      <!-- <span :class="[selected.find(person => person.id === row.id) && 'text-primary-500 dark:text-primary-400']">{{ row.name }}</span> -->
+    </template>
+    <template #synopsis-data="{ row }">
+      {{ row.synopsis.split(' ').slice(0, 10).join(' ') + (row.synopsis.split(' ').length > 10 ? '...' : '') }}
+    </template>
   </UTable>
   <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
-    <UPagination v-model="page" :page-count="pageCount" :total="props.people.length" />
+    <UPagination v-model="page" :page-count="pageCount" :total="totalBookCount" />
   </div>
-  
+
 
 </template>
