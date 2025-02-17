@@ -9,9 +9,7 @@
             <li>
                 <router-link to="/">My BookShelf</router-link>
             </li>
-            <li>
-                <router-link to="/"></router-link>
-            </li>
+
         </ul>
     </nav>
 </template>
@@ -24,11 +22,17 @@ export default {
 
 <style scoped>
 .nav {
-  background-color: #333;
-  color: #fff;
-  width: 100%;
+  background: #2c3e50;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 1.5rem;
+  font-weight: bold;
   display: flex;
-  padding: 0.5em 1em;
+  justify-content: center;
+  align-items: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 .nav ul {
@@ -45,6 +49,7 @@ export default {
   height: 50px;
   width: auto;
   margin-right: 1em;
+  border-radius: 10px;
 }
 
 .nav ul li {
@@ -55,10 +60,13 @@ export default {
   color: #fff;
   text-decoration: none;
   padding: 0.5em 1em;
-  transition: background-color 0.3s;
+  border-radius: 5px;
+  background-color: #34495e; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .nav ul li a:hover {
-  background-color: #555;
+  background-color: #1abc9c;
 }
 </style>

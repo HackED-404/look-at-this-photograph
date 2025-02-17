@@ -105,14 +105,21 @@ async function upload() {
   min-height: 200px;
   max-height: 400px;
   width: 600px;
-  background: #fdfdfd;
-  border-radius: 5px;
-  border: 2px dashed #000;
+  background: #f0f4f8;
+  border-radius: 10px;
+  border: 2px dashed #3498db;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
+  margin: 20px auto;
+  padding: 20px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.dropzone:hover {
+  background-color: #e0e7ef;
+  border-color: #2980b9;
 }
 
 input[type="file"] {
@@ -127,22 +134,30 @@ input[type="file"] {
 img {
   width: 50%;
   height: 50%;
+  margin-top: 10px;
+  border-radius: 10px;
 }
 
 button {
-  background-color: transparent;
-  border: 2px solid #e74c3c;
-  border-radius: 1em;
-  color: #e74c3c;
+  background-color: #3498db;
+  border: none;
+  border-radius: 5px;
+  color: white;
   cursor: pointer;
   display: flex;
   align-self: center;
   font-size: 1rem;
-  margin: 20px;
-  padding: 1.2em 2.4em;
+  margin: 20px auto;
+  padding: 1em 2em;
   text-align: center;
   text-transform: uppercase;
   font-family: "Montserrat", sans-serif;
   font-weight: 700;
+  transition: background-color 0.3s, box-shadow 0.3s;
+
+}
+button:hover {
+  background-color: #2980b9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>
